@@ -23,6 +23,7 @@ def getAllDirSize(dir_name, depth):
     dirs_size = OrderedDict()
     for root, dirs, files in os.walk(dir_name, topdown=True):
         current_depth = root[len(dir_name) + len(os.path.sep):].count(os.path.sep)
+        print root
         # ignore the snapshots
         if '.snapshot' in dirs:
             dirs.remove('.snapshot')
