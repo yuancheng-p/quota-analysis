@@ -37,8 +37,4 @@ I wish this little tool could solve your quota problem!
 
 TODO
 ----
-1. Improve the output information when the script is running
-
-2. Identify the exceptions (ex: permission denied :D)
-
-3. FIXME: the option ``-d`` is buggy
+1. Identify the exceptions (ex: permission denied :D)

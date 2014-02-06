@@ -12,51 +12,10 @@ import argparse
 size_results = OrderedDict()
 
 
-def getDirSize(dir_name):
-    for root, dirs, files in os.walk(dir_name, topdown=False):
-        if root in size_results.keys():
-            break
-        else:
-            size_results[root] = 0
+def saveSizeResult(root, dirs, files):
+    if root in size_results.keys():
+        return  # skip the calculated results
 
-        for name in files:
-            try:
-                size_results[join(root, name)] = getsize(join(root, name))
-                size_results[root] += size_results[join(root, name)]
-            except:
-                pass
-
-        for d in dirs:
-            try:
-                size_results[root] += size_results[join(root, d)]
-            except:
-                pass
-
-    return
-
-
-def getAllDirSize(dir_name):
-    for root, dirs, files in os.walk(dir_name, topdown=True):
-        current_depth = root[len(dir_name)
-                             + len(os.path.sep):].count(os.path.sep)
-
-        # TODO identify the home folder where .snapshot situated
-        # Otherwise, the program is buggy when there is .snapshot in any other
-        # folders
-
-        print root
-        # ignore the snapshots
-        if '.snapshot' in dirs:
-            dirs.remove('.snapshot')
-        if current_depth == 1:  # the depth 1 is just for cutting the .snapshot
-            dirs[:] = []
-        if root != '.':
-            getDirSize(root)
-
-    # The size of '.'
-    root, dirs, files = os.walk(dir_name, topdown=True).next()
-
-    # TODO reuse the part of code
     size_results[root] = 0
     for name in files:
         try:
@@ -69,6 +28,44 @@ def getAllDirSize(dir_name):
             size_results[root] += size_results[join(root, d)]
         except:
             pass
+    return
+
+
+def getAbsDepth(dir_name):
+    current_abs_path = os.path.abspath(dir_name)
+    return current_abs_path.count(os.path.sep)
+
+
+# bottom-up traversal mode
+def getDirSize(dir_name):
+    for root, dirs, files in os.walk(dir_name, topdown=False):
+        saveSizeResult(root, dirs, files)
+    return
+
+
+def getAllDirSize(dir_name):
+    init_abs_depth = getAbsDepth(dir_name)
+
+    for root, dirs, files in os.walk(dir_name, topdown=True):
+        current_abs_depth = getAbsDepth(root)
+        relative_depth = current_abs_depth - init_abs_depth
+
+        # identify the home folder where .snapshot situated
+        if '.snapshot' in dirs and current_abs_depth == 2:
+            dirs.remove('.snapshot')  # ignore the snapshots
+
+        # only scan dir_name's directive children
+        if relative_depth == 1:
+            dirs[:] = []
+
+        # /homes/user/dir[/..../...] and the root is dir_name's direct child
+        if current_abs_depth > 2 and relative_depth == 1:
+            print root
+            getDirSize(root)
+
+    # The size of '.'
+    root, dirs, files = os.walk(dir_name, topdown=True).next()
+    saveSizeResult(root, dirs, files)
 
     return size_results
 
@@ -95,7 +92,15 @@ def parse_args(options):
     return parser.parse_args()
 
 
+def checkAbsPath(dir_name):
+    abs_dir = os.path.abspath(dir_name)
+    if 'homes' not in abs_dir and 'home' not in abs_dir:
+        print 'Please ensure that you are analysing a personal directory'
+        exit(-1)
+
+
 if __name__ == '__main__':
     options = parse_args(sys.argv[1:])
+    checkAbsPath(options.dirname)
     getAllDirSize(options.dirname)
     printLargeDirs(options.number)
