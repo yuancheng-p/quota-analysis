@@ -1,5 +1,7 @@
 quota-analyse
 =============
+This is a little tool to find out the biggest files and folders.
+It is useful when your quota allocated is not large.
 
 
 Motivation
@@ -23,21 +25,16 @@ Usage
 
 
 2. To gather more information, you can enter the number of top largest
-   directories that you want with ``-n``, the depth of directories to analyse with ``--depth``, and the
-   specified directory begin to analyse with ``-d``.
-   For example, to analyse from the current directory with a depth of 3 and to
-   print the top 30 largest directories::
+   directories that you want with ``-n``, and the specified directory begin to
+   analyse with ``-d``.
+   For example, to analyse from the personal directory and print the top 30
+   largest directories::
 
-      $> ./quota-analyse -d . -n 30 --depth 3
+      $> ./quota-analyse -d ~ -n 30
 
 I wish this little tool could solve your quota problem!
 
 
 TODO
 ----
-
-1. FIXME: the ``--depth`` doesn't work
-
-2. Provide friendly information when script is running
-
-3. Optimize the algorithm.
+1. Improve the output information when the script is running
