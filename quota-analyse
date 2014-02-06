@@ -19,8 +19,6 @@ def getDirSize(dir_name):
         else:
             size_results[root] = 0
 
-        print root
-
         for name in files:
             try:
                 size_results[join(root, name)] = getsize(join(root, name))
@@ -34,7 +32,7 @@ def getDirSize(dir_name):
             except:
                 pass
 
-    return size_results[dir_name]
+    return
 
 
 def getAllDirSize(dir_name):
@@ -45,6 +43,7 @@ def getAllDirSize(dir_name):
         # Otherwise, the program is buggy when there is .snapshot in any other
         # folders
 
+        print root
         # ignore the snapshots
         if '.snapshot' in dirs:
             dirs.remove('.snapshot')
@@ -52,16 +51,34 @@ def getAllDirSize(dir_name):
             dirs[:] = []
         if root != '.':
             getDirSize(root)
+
+    # The size of '.'
+    root, dirs, files = os.walk(dir_name, topdown=True).next()
+
+    # TODO reuse the part of code
+    size_results[root] = 0
+    for name in files:
+        try:
+            size_results[join(root, name)] = getsize(join(root, name))
+            size_results[root] += size_results[join(root, name)]
+        except:
+            pass
+    for d in dirs:
+        try:
+            size_results[root] += size_results[join(root, d)]
+        except:
+            pass
+
     return size_results
 
 
 def printLargeDirs(topNum):
     l = sorted(size_results.items(),key = lambda t:t[1]) # sort dict by values
     num = min(topNum, len(l))
-    print '----------RESULTS-------------'
+    print '-----------------RESULTS-------------------'
     for i in range(num):
         print "%s : %f M" % (l[len(l) - i - 1][0], l[len(l) - i - 1][1] / 1024.0 / 1024.0)
-    print '------------------------------'
+    print '-------------------------------------------'
     return
 
 
