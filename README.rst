@@ -4,11 +4,6 @@ This is a little tool to find out the biggest files and folders.
 It is useful when your quota allocated is not large.
 
 
-Motivation
-----------
-TODO
-
-
 Usage
 -----
 
