@@ -28,8 +28,3 @@ Usage
       $> ./quota-analyse -d ~ -n 30
 
 I wish this little tool could solve your quota problem!
-
-
-TODO
-----
-1. Identify the exceptions (ex: permission denied :D)

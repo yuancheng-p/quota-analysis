@@ -13,9 +13,6 @@ size_results = OrderedDict()
 
 
 def saveSizeResult(root, dirs, files):
-    if root in size_results.keys():
-        return  # skip the calculated results
-
     size_results[root] = 0
     for name in files:
         try:
@@ -39,6 +36,8 @@ def getAbsDepth(dir_name):
 # bottom-up traversal mode
 def getDirSize(dir_name):
     for root, dirs, files in os.walk(dir_name, topdown=False):
+        if root in size_results.keys():
+            continue  # skip the calculated results
         saveSizeResult(root, dirs, files)
     return
 
